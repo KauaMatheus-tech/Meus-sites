@@ -1,0 +1,277 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>FinanSys</title>
+  <style>
+    body {
+      font-family: 'Segoe UI', sans-serif;
+      background: #1f1f2e;
+      color: #ecf0f1;
+      margin: 0;
+      padding: 0;
+    }
+
+    header {
+      background-color: #151522;
+      padding: 20px;
+      text-align: center;
+      color: #00e6a8;
+      box-shadow: 0 4px 6px rgba(0,0,0,0.3);
+    }
+
+    .container {
+      max-width: 900px;
+      margin: 30px auto;
+      padding: 20px;
+      background: #2a2a40;
+      border-radius: 10px;
+    }
+
+    .dashboard {
+      display: flex;
+      justify-content: space-between;
+      gap: 10px;
+      margin-bottom: 30px;
+    }
+
+    .card {
+      flex: 1;
+      background-color: #33334d;
+      padding: 20px;
+      border-radius: 8px;
+      text-align: center;
+      box-shadow: 0 2px 6px rgba(0,0,0,0.3);
+    }
+
+    .card h2 {
+      margin: 0;
+      font-size: 18px;
+      color: #aaa;
+    }
+
+    .card p {
+      font-size: 24px;
+      font-weight: bold;
+      margin-top: 10px;
+    }
+
+    .form {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 10px;
+      margin-bottom: 20px;
+    }
+
+    .form input, .form select {
+      padding: 10px;
+      flex: 1;
+      min-width: 140px;
+      border-radius: 6px;
+      border: none;
+    }
+
+    .form button {
+      background-color: #00e6a8;
+      color: #151522;
+      padding: 10px 20px;
+      border: none;
+      border-radius: 6px;
+      cursor: pointer;
+    }
+
+    .form button:hover {
+      background-color: #00c290;
+    }
+
+    .filter {
+      margin-bottom: 20px;
+      text-align: right;
+    }
+
+    .filter select {
+      padding: 6px 12px;
+      border-radius: 4px;
+      background: #444;
+      color: #fff;
+      border: none;
+    }
+
+    table {
+      width: 100%;
+      border-collapse: collapse;
+      background: #1f1f2e;
+    }
+
+    th, td {
+      padding: 12px;
+      text-align: left;
+      border-bottom: 1px solid #444;
+    }
+
+    th {
+      background-color: #33334d;
+    }
+
+    tr:hover {
+      background-color: #2a2a40;
+    }
+
+    .receita { color: #2ecc71; }
+    .despesa { color: #e74c3c; }
+  </style>
+</head>
+<body>
+  <header>
+    <h1>📊 FinanSys</h1>
+  </header>
+
+  <div class="container">
+    <div class="dashboard">
+      <div class="card">
+        <h2>Saldo Total</h2>
+        <p id="saldo">R$ 0.00</p>
+      </div>
+      <div class="card">
+        <h2>Receitas</h2>
+        <p id="totalReceitas">R$ 0.00</p>
+      </div>
+      <div class="card">
+        <h2>Despesas</h2>
+        <p id="totalDespesas">R$ 0.00</p>
+      </div>
+    </div>
+
+    <div class="form">
+      <input type="text" id="descricao" placeholder="Descrição" />
+      <input type="number" id="valor" placeholder="Valor" />
+      <select id="tipo">
+        <option value="receita">Receita</option>
+        <option value="despesa">Despesa</option>
+      </select>
+      <button onclick="adicionar()">Adicionar</button>
+      <button onclick="exportarCSV()">📥 Exportar CSV</button>
+      <button onclick="limparTudo()">🗑 Limpar Tudo</button>
+    </div>
+
+    <div class="filter">
+      <label for="filtro">Filtrar: </label>
+      <select id="filtro" onchange="filtrar()">
+        <option value="todos">Todos</option>
+        <option value="receita">Receitas</option>
+        <option value="despesa">Despesas</option>
+      </select>
+    </div>
+
+    <table>
+      <thead>
+        <tr>
+          <th>Descrição</th>
+          <th>Valor</th>
+          <th>Tipo</th>
+          <th>Ação</th>
+        </tr>
+      </thead>
+      <tbody id="tabela"></tbody>
+    </table>
+  </div>
+
+  <script>
+    const tabela = document.getElementById('tabela');
+    const saldoEl = document.getElementById('saldo');
+    const receitasEl = document.getElementById('totalReceitas');
+    const despesasEl = document.getElementById('totalDespesas');
+    const filtroEl = document.getElementById('filtro');
+
+    let transacoes = JSON.parse(localStorage.getItem('financas')) || [];
+
+    function atualizarDashboard() {
+      let saldo = 0, receitas = 0, despesas = 0;
+      transacoes.forEach(t => {
+        if (t.tipo === 'receita') receitas += t.valor;
+        else despesas += t.valor;
+      });
+      saldo = receitas - despesas;
+
+      saldoEl.textContent = `R$ ${saldo.toFixed(2)}`;
+      receitasEl.textContent = `R$ ${receitas.toFixed(2)}`;
+      despesasEl.textContent = `R$ ${despesas.toFixed(2)}`;
+    }
+
+    function renderizarTabela(filtro = 'todos') {
+      tabela.innerHTML = '';
+      transacoes.forEach((item, index) => {
+        if (filtro !== 'todos' && item.tipo !== filtro) return;
+
+        const row = document.createElement('tr');
+        row.innerHTML = `
+          <td>${item.descricao}</td>
+          <td>R$ ${item.valor.toFixed(2)}</td>
+          <td class="${item.tipo}">${item.tipo}</td>
+          <td><button onclick="remover(${index})">Remover</button></td>
+        `;
+        tabela.appendChild(row);
+      });
+      atualizarDashboard();
+    }
+
+    function adicionar() {
+      const descricao = document.getElementById('descricao').value.trim();
+      const valor = parseFloat(document.getElementById('valor').value);
+      const tipo = document.getElementById('tipo').value;
+
+      if (!descricao || isNaN(valor) || valor <= 0) {
+        alert('Preencha corretamente os dados.');
+        return;
+      }
+
+      transacoes.push({ descricao, valor, tipo });
+      localStorage.setItem('financas', JSON.stringify(transacoes));
+      renderizarTabela(filtroEl.value);
+
+      document.getElementById('descricao').value = '';
+      document.getElementById('valor').value = '';
+    }
+
+    function remover(index) {
+      transacoes.splice(index, 1);
+      localStorage.setItem('financas', JSON.stringify(transacoes));
+      renderizarTabela(filtroEl.value);
+    }
+
+    function filtrar() {
+      renderizarTabela(filtroEl.value);
+    }
+
+    function exportarCSV() {
+      if (transacoes.length === 0) {
+        alert('Nada para exportar.');
+        return;
+      }
+
+      let csv = "Descrição,Valor,Tipo\n";
+      transacoes.forEach(t => {
+        csv += `${t.descricao},${t.valor.toFixed(2)},${t.tipo}\n`;
+      });
+
+      const blob = new Blob([csv], { type: 'text/csv;charset=utf-8;' });
+      const url = URL.createObjectURL(blob);
+      const a = document.createElement("a");
+      a.href = url;
+      a.download = "financas.csv";
+      a.click();
+    }
+
+    function limparTudo() {
+      if (confirm("Tem certeza que deseja apagar tudo?")) {
+        transacoes = [];
+        localStorage.removeItem('financas');
+        renderizarTabela();
+      }
+    }
+
+    renderizarTabela();
+  </script>
+</body>
+</html>

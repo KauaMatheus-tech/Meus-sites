@@ -1,0 +1,132 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Sistema de Finanças</title>
+  <style>
+    body {
+      font-family: Arial, sans-serif;
+      background: #f4f6f8;
+      padding: 20px;
+      max-width: 600px;
+      margin: auto;
+    }
+    h1 {
+      text-align: center;
+      color: #2c3e50;
+    }
+    .saldo {
+      font-size: 24px;
+      font-weight: bold;
+      margin: 10px 0;
+    }
+    .form {
+      display: flex;
+      gap: 10px;
+      margin-bottom: 20px;
+      flex-wrap: wrap;
+    }
+    .form input, .form select {
+      padding: 8px;
+      flex: 1;
+      min-width: 120px;
+    }
+    button {
+      background-color: #2980b9;
+      color: white;
+      padding: 10px;
+      border: none;
+      cursor: pointer;
+    }
+    button:hover {
+      background-color: #3498db;
+    }
+    ul {
+      list-style: none;
+      padding: 0;
+    }
+    li {
+      background: white;
+      padding: 10px;
+      margin: 5px 0;
+      border-left: 5px solid;
+      display: flex;
+      justify-content: space-between;
+    }
+    .receita { border-color: #2ecc71; }
+    .despesa { border-color: #e74c3c; }
+  </style>
+</head>
+<body>
+  <h1>Controle de Finanças</h1>
+  <div class="saldo" id="saldo">Saldo: R$ 0.00</div>
+
+  <div class="form">
+    <input type="text" id="descricao" placeholder="Descrição" />
+    <input type="number" id="valor" placeholder="Valor" />
+    <select id="tipo">
+      <option value="receita">Receita</option>
+      <option value="despesa">Despesa</option>
+    </select>
+    <button onclick="adicionar()">Adicionar</button>
+  </div>
+
+  <ul id="lista"></ul>
+
+  <script>
+    const lista = document.getElementById('lista');
+    const saldoEl = document.getElementById('saldo');
+    let transacoes = JSON.parse(localStorage.getItem('financas')) || [];
+
+    function atualizarSaldo() {
+      const saldo = transacoes.reduce((acc, item) => {
+        return acc + (item.tipo === 'receita' ? item.valor : -item.valor);
+      }, 0);
+      saldoEl.textContent = 'Saldo: R$ ' + saldo.toFixed(2);
+      saldoEl.style.color = saldo >= 0 ? '#27ae60' : '#e74c3c';
+    }
+
+    function renderizarTransacoes() {
+      lista.innerHTML = '';
+      transacoes.forEach((item, index) => {
+        const li = document.createElement('li');
+        li.className = item.tipo;
+        li.innerHTML = `
+          <span>${item.descricao} - R$ ${item.valor.toFixed(2)}</span>
+          <span onclick="remover(${index})" style="cursor:pointer; color: red;">✖</span>
+        `;
+        lista.appendChild(li);
+      });
+      atualizarSaldo();
+    }
+
+    function adicionar() {
+      const descricao = document.getElementById('descricao').value;
+      const valor = parseFloat(document.getElementById('valor').value);
+      const tipo = document.getElementById('tipo').value;
+
+      if (!descricao || isNaN(valor)) {
+        alert('Preencha todos os campos corretamente.');
+        return;
+      }
+
+      transacoes.push({ descricao, valor, tipo });
+      localStorage.setItem('financas', JSON.stringify(transacoes));
+      renderizarTransacoes();
+
+      document.getElementById('descricao').value = '';
+      document.getElementById('valor').value = '';
+    }
+
+    function remover(index) {
+      transacoes.splice(index, 1);
+      localStorage.setItem('financas', JSON.stringify(transacoes));
+      renderizarTransacoes();
+    }
+
+    // Inicializa o app
+    renderizarTransacoes();
+  </script>
+</body>
+</html>
