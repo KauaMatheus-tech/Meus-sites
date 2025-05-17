@@ -3,144 +3,260 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
-  <title>FinanSys</title>
+  <title>FinanSys - Dashboard Avançado</title>
+  <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
   <style>
-    body {
-      font-family: 'Segoe UI', sans-serif;
-      background: #1f1f2e;
-      color: #ecf0f1;
-      margin: 0;
-      padding: 0;
-    }
+    * {
+  box-sizing: border-box;
+}
 
-    header {
-      background-color: #151522;
-      padding: 20px;
-      text-align: center;
-      color: #00e6a8;
-      box-shadow: 0 4px 6px rgba(0,0,0,0.3);
-    }
+body {
+  font-family: 'Segoe UI', sans-serif;
+  margin: 0;
+  padding: 0;
+  background: linear-gradient(to right, #1f1f2e, #2d2d44);
+  color: #ecf0f1;
+  transition: background-color 0.3s, color 0.3s;
+}
 
-    .container {
-      max-width: 900px;
-      margin: 30px auto;
-      padding: 20px;
-      background: #2a2a40;
-      border-radius: 10px;
-    }
+.light-mode {
+  background: linear-gradient(to right, #f9f9f9, #e0e0e0);
+  color: #222;
+}
 
-    .dashboard {
-      display: flex;
-      justify-content: space-between;
-      gap: 10px;
-      margin-bottom: 30px;
-    }
+header {
+  background: linear-gradient(to right, #151522, #24243e);
+  padding: 20px;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  color: #00e6a8;
+  box-shadow: 0 4px 10px rgba(0,0,0,0.4);
+}
 
-    .card {
-      flex: 1;
-      background-color: #33334d;
-      padding: 20px;
-      border-radius: 8px;
-      text-align: center;
-      box-shadow: 0 2px 6px rgba(0,0,0,0.3);
-    }
+h1 {
+  font-size: 24px;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
 
-    .card h2 {
-      margin: 0;
-      font-size: 18px;
-      color: #aaa;
-    }
+.profile {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+}
 
-    .card p {
-      font-size: 24px;
-      font-weight: bold;
-      margin-top: 10px;
-    }
+.profile img {
+  width: 36px;
+  height: 36px;
+  border-radius: 50%;
+  border: 2px solid #00e6a8;
+}
 
-    .form {
-      display: flex;
-      flex-wrap: wrap;
-      gap: 10px;
-      margin-bottom: 20px;
-    }
+.container {
+  max-width: 1000px;
+  margin: 20px auto;
+  padding: 20px;
+  background: #2a2a40;
+  border-radius: 12px;
+  box-shadow: 0 8px 16px rgba(0,0,0,0.3);
+}
 
-    .form input, .form select {
-      padding: 10px;
-      flex: 1;
-      min-width: 140px;
-      border-radius: 6px;
-      border: none;
-    }
+.dashboard {
+  display: flex;
+  justify-content: space-between;
+  flex-wrap: wrap;
+  gap: 16px;
+  margin-bottom: 20px;
+}
 
-    .form button {
-      background-color: #00e6a8;
-      color: #151522;
-      padding: 10px 20px;
-      border: none;
-      border-radius: 6px;
-      cursor: pointer;
-    }
+.card {
+  flex: 1;
+  min-width: 200px;
+  background: linear-gradient(145deg, #33334d, #2d2d44);
+  padding: 20px;
+  border-radius: 10px;
+  text-align: center;
+  box-shadow: 0 2px 10px rgba(0,0,0,0.4);
+  transition: transform 0.3s ease, box-shadow 0.3s ease;
+}
 
-    .form button:hover {
-      background-color: #00c290;
-    }
+.card:hover {
+  transform: translateY(-5px);
+  box-shadow: 0 4px 14px rgba(0,0,0,0.5);
+}
 
-    .filter {
-      margin-bottom: 20px;
-      text-align: right;
-    }
+.card h2 {
+  font-size: 16px;
+  color: #bbb;
+  margin: 0;
+  letter-spacing: 1px;
+}
 
-    .filter select {
-      padding: 6px 12px;
-      border-radius: 4px;
-      background: #444;
-      color: #fff;
-      border: none;
-    }
+.card p {
+  font-size: 26px;
+  margin-top: 12px;
+  font-weight: bold;
+  color: #00e6a8;
+}
 
-    table {
-      width: 100%;
-      border-collapse: collapse;
-      background: #1f1f2e;
-    }
+.form {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 12px;
+  margin-bottom: 20px;
+}
 
-    th, td {
-      padding: 12px;
-      text-align: left;
-      border-bottom: 1px solid #444;
-    }
+.form input, .form select {
+  flex: 1;
+  padding: 12px;
+  border-radius: 8px;
+  border: none;
+  min-width: 140px;
+  background-color: #44445e;
+  color: #fff;
+  outline: none;
+  transition: 0.2s;
+}
 
-    th {
-      background-color: #33334d;
-    }
+.form input:focus, .form select:focus {
+  background-color: #555570;
+}
 
-    tr:hover {
-      background-color: #2a2a40;
-    }
+.form button {
+  background-color: #00e6a8;
+  color: #151522;
+  border: none;
+  padding: 12px 18px;
+  border-radius: 8px;
+  cursor: pointer;
+  font-weight: bold;
+  transition: 0.3s;
+}
 
-    .receita { color: #2ecc71; }
-    .despesa { color: #e74c3c; }
+.form button:hover {
+  background-color: #00c290;
+  transform: scale(1.05);
+}
+
+.filter {
+  display: flex;
+  justify-content: space-between;
+  margin-bottom: 10px;
+  flex-wrap: wrap;
+  gap: 10px;
+}
+
+.filter input, .filter select {
+  padding: 8px 12px;
+  border-radius: 6px;
+  border: none;
+  background-color: #44445e;
+  color: #fff;
+}
+
+table {
+  width: 100%;
+  border-collapse: collapse;
+  margin-top: 10px;
+  background-color: #1f1f2e;
+  border-radius: 8px;
+  overflow: hidden;
+}
+
+th, td {
+  padding: 14px;
+  text-align: left;
+  border-bottom: 1px solid #444;
+}
+
+th {
+  background-color: #2f2f4d;
+  color: #00e6a8;
+  text-transform: uppercase;
+  letter-spacing: 1px;
+}
+
+td button {
+  background: transparent;
+  color: #e74c3c;
+  font-size: 18px;
+  border: none;
+  cursor: pointer;
+  transition: transform 0.2s ease;
+}
+
+td button:hover {
+  transform: scale(1.2);
+}
+
+tr:hover {
+  background-color: #2a2a40;
+}
+
+.receita {
+  color: #2ecc71;
+  font-weight: bold;
+}
+
+.despesa {
+  color: #e74c3c;
+  font-weight: bold;
+}
+
+canvas {
+  background-color: #fff;
+  border-radius: 10px;
+  margin-top: 20px;
+  padding: 10px;
+  box-shadow: 0 4px 12px rgba(0,0,0,0.3);
+}
+
+.toggle-mode {
+  background: transparent;
+  color: #00e6a8;
+  border: 1px solid #00e6a8;
+  padding: 6px 12px;
+  border-radius: 6px;
+  cursor: pointer;
+  transition: all 0.3s ease;
+}
+
+.toggle-mode:hover {
+  background-color: #00e6a8;
+  color: #151522;
+}
+
   </style>
 </head>
 <body>
+
+  <div id="modalUsuario" style="position:fixed; top:0; left:0; width:100%; height:100%; background:rgba(0,0,0,0.7); display:flex; justify-content:center; align-items:center; z-index:1000;">
+    <div style="background:#2d2d44; padding:20px; border-radius:10px; color:white; width:90%; max-width:400px;">
+      <h2>Bem-vindo ao FinanSys</h2>
+      <p>Preencha seus dados para começar:</p>
+      <input id="nomeUsuario" type="text" placeholder="Seu nome" style="width:100%; padding:10px; margin-bottom:10px; border-radius:6px; border:none;">
+      <button onclick="salvarUsuario()" style="width:100%; padding:10px; background:#00e6a8; color:#151522; border:none; border-radius:6px; font-weight:bold;">Entrar</button>
+    </div>
+  </div> 
+
   <header>
-    <h1>📊 FinanSys</h1>
+    <h1>📈 FinanSys</h1>
+    <div class="profile">
+      <img id="avatarUsuario" src="https://i.pravatar.cc/40?u=usuario" alt="avatar">
+      <span id="nomeSaudacao">Olá, Usuário</span>
+      <button class="toggle-mode" onclick="alternarModo()">🌗 Modo</button>
+    </div>    
+    <p id="contador" style="text-align:center; margin-top:10px;"></p>
+
   </header>
 
   <div class="container">
     <div class="dashboard">
-      <div class="card">
-        <h2>Saldo Total</h2>
-        <p id="saldo">R$ 0.00</p>
-      </div>
-      <div class="card">
-        <h2>Receitas</h2>
-        <p id="totalReceitas">R$ 0.00</p>
-      </div>
-      <div class="card">
-        <h2>Despesas</h2>
-        <p id="totalDespesas">R$ 0.00</p>
-      </div>
+      <div class="card"><h2>Saldo Total</h2><p id="saldo">R$ 0.00</p></div>
+      <div class="card"><h2>Receitas</h2><p id="totalReceitas">R$ 0.00</p></div>
+      <div class="card"><h2>Despesas</h2><p id="totalDespesas">R$ 0.00</p></div>
     </div>
 
     <div class="form">
@@ -150,13 +266,16 @@
         <option value="receita">Receita</option>
         <option value="despesa">Despesa</option>
       </select>
-      <button onclick="adicionar()">Adicionar</button>
+      <button onclick="adicionar()">➕ Adicionar</button>
       <button onclick="exportarCSV()">📥 Exportar CSV</button>
-      <button onclick="limparTudo()">🗑 Limpar Tudo</button>
+      <button onclick="limparTudo()">🗑 Limpar</button>
+      <button onclick="ordenarPorValor()">🔼 Ordenar por Valor</button>
+
+
     </div>
 
     <div class="filter">
-      <label for="filtro">Filtrar: </label>
+      <input type="text" id="busca" placeholder="Buscar por descrição..." oninput="filtrar()">
       <select id="filtro" onchange="filtrar()">
         <option value="todos">Todos</option>
         <option value="receita">Receitas</option>
@@ -175,6 +294,8 @@
       </thead>
       <tbody id="tabela"></tbody>
     </table>
+
+    <canvas id="grafico" height="150"></canvas>
   </div>
 
   <script>
@@ -183,8 +304,11 @@
     const receitasEl = document.getElementById('totalReceitas');
     const despesasEl = document.getElementById('totalDespesas');
     const filtroEl = document.getElementById('filtro');
+    const buscaEl = document.getElementById('busca');
+    const graficoCanvas = document.getElementById('grafico');
 
     let transacoes = JSON.parse(localStorage.getItem('financas')) || [];
+    let chart;
 
     function atualizarDashboard() {
       let saldo = 0, receitas = 0, despesas = 0;
@@ -197,19 +321,21 @@
       saldoEl.textContent = `R$ ${saldo.toFixed(2)}`;
       receitasEl.textContent = `R$ ${receitas.toFixed(2)}`;
       despesasEl.textContent = `R$ ${despesas.toFixed(2)}`;
+      atualizarGrafico(receitas, despesas);
     }
 
-    function renderizarTabela(filtro = 'todos') {
+    function renderizarTabela() {
+      const filtro = filtroEl.value;
+      const termo = buscaEl.value.toLowerCase();
       tabela.innerHTML = '';
       transacoes.forEach((item, index) => {
-        if (filtro !== 'todos' && item.tipo !== filtro) return;
-
+        if ((filtro !== 'todos' && item.tipo !== filtro) || !item.descricao.toLowerCase().includes(termo)) return;
         const row = document.createElement('tr');
         row.innerHTML = `
           <td>${item.descricao}</td>
           <td>R$ ${item.valor.toFixed(2)}</td>
           <td class="${item.tipo}">${item.tipo}</td>
-          <td><button onclick="remover(${index})">Remover</button></td>
+          <td><button onclick="remover(${index})">❌</button></td>
         `;
         tabela.appendChild(row);
       });
@@ -222,39 +348,33 @@
       const tipo = document.getElementById('tipo').value;
 
       if (!descricao || isNaN(valor) || valor <= 0) {
-        alert('Preencha corretamente os dados.');
+        alert('Preencha os campos corretamente.');
         return;
       }
 
       transacoes.push({ descricao, valor, tipo });
       localStorage.setItem('financas', JSON.stringify(transacoes));
-      renderizarTabela(filtroEl.value);
-
       document.getElementById('descricao').value = '';
       document.getElementById('valor').value = '';
+      renderizarTabela();
     }
 
     function remover(index) {
       transacoes.splice(index, 1);
       localStorage.setItem('financas', JSON.stringify(transacoes));
-      renderizarTabela(filtroEl.value);
+      renderizarTabela();
     }
 
     function filtrar() {
-      renderizarTabela(filtroEl.value);
+      renderizarTabela();
     }
 
     function exportarCSV() {
-      if (transacoes.length === 0) {
-        alert('Nada para exportar.');
-        return;
-      }
-
+      if (transacoes.length === 0) return alert('Nada para exportar.');
       let csv = "Descrição,Valor,Tipo\n";
       transacoes.forEach(t => {
         csv += `${t.descricao},${t.valor.toFixed(2)},${t.tipo}\n`;
       });
-
       const blob = new Blob([csv], { type: 'text/csv;charset=utf-8;' });
       const url = URL.createObjectURL(blob);
       const a = document.createElement("a");
@@ -264,14 +384,89 @@
     }
 
     function limparTudo() {
-      if (confirm("Tem certeza que deseja apagar tudo?")) {
+      if (confirm("Deseja apagar todas as transações?")) {
         transacoes = [];
         localStorage.removeItem('financas');
         renderizarTabela();
       }
     }
 
+    function atualizarGrafico(receitas, despesas) {
+      if (chart) chart.destroy();
+      chart = new Chart(graficoCanvas, {
+        type: 'doughnut',
+        data: {
+          labels: ['Receitas', 'Despesas'],
+          datasets: [{
+            data: [receitas, despesas],
+            backgroundColor: ['#2ecc71', '#e74c3c']
+          }]
+        },
+        options: {
+          plugins: { legend: { position: 'bottom' } }
+        }
+      });
+    }
+
+    function alternarModo() {
+      document.body.classList.toggle('light-mode');
+    }
+
     renderizarTabela();
+    
+  </script>
+  <script>
+    function salvarUsuario() {
+      const nome = document.getElementById('nomeUsuario').value.trim();
+     
+  
+      if (!nome ) {
+        alert("Preencha todos os campos.");
+        return;
+      }
+  
+      const usuario = { nome};
+      localStorage.setItem('usuarioFinanSys', JSON.stringify(usuario));
+      document.getElementById('modalUsuario').style.display = 'none';
+      atualizarPerfilUsuario();
+    }
+  
+    function atualizarPerfilUsuario() {
+      const dados = JSON.parse(localStorage.getItem('usuarioFinanSys'));
+      if (dados) {
+        document.getElementById('nomeSaudacao').textContent = `Olá, ${dados.nome}`;
+      }
+    }
+  
+    window.onload = () => {
+      const dados = localStorage.getItem('usuarioFinanSys');
+      if (!dados) {
+        document.getElementById('modalUsuario').style.display = 'flex';
+      } else {
+        atualizarPerfilUsuario();
+      }
+    };
+  </script> 
+  <script>
+    let ordemCrescente = true;
+  
+    function ordenarPorValor() {
+      // Ordena transações por valor (crescente ou decrescente)
+      transacoes.sort((a, b) => ordemCrescente ? a.valor - b.valor : b.valor - a.valor);
+  
+      // Alterna o modo
+      ordemCrescente = !ordemCrescente;
+  
+      // Atualiza o texto do botão
+      const botao = document.querySelector('button[onclick="ordenarPorValor()"]');
+      botao.textContent = ordemCrescente 
+        ? "🔼 Ordenar por Valor (Crescente)" 
+        : "🔽 Ordenar por Valor (Decrescente)";
+  
+      // Re-renderiza a tabela
+      renderizarTabela();
+    }
   </script>
 </body>
 </html>
+
